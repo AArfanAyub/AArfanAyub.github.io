@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="IMRI — offline library management for school resource centres. One Windows PC, one SQLite file, no internet. Python standard library only, no installer, no dependencies.">
+<meta property="og:title" content="IMRI — Offline Library Management">
+<meta property="og:description" content="Replaces the paper borrowing register in a school library. One PC, one SQLite file, no internet, no installer.">
+<meta property="og:type" content="article">
+<title>IMRI — Offline Library Management | Arfan</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
+<style>
+:root {
+  --bg: #0c0c12;
+  --bg-elevated: #12121a;
+  --bg-card: #181820;
+  --bg-card-hover: #1e1e2a;
+  --text: #f5f5f7;
+  --text-secondary: #a0a0b0;
+  --text-tertiary: #6a6a7a;
+  --accent: #8b5cf6;
+  --accent-light: #a78bfa;
+  --accent-glow: rgba(139,92,246,0.3);
+  --green: #34d399;
+  --border: rgba(255,255,255,0.06);
+  --border-hover: rgba(255,255,255,0.12);
+  --shadow-lg: 0 12px 40px rgba(0,0,0,0.5);
+  --radius-sm: 12px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.65;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 45% at 50% -5%, rgba(139,92,246,0.16), transparent),
+    radial-gradient(ellipse 45% 35% at 88% 12%, rgba(52,211,153,0.06), transparent);
+  pointer-events: none;
+  z-index: 0;
+}
+.wrap { position: relative; z-index: 1; max-width: 1040px; margin: 0 auto; padding: 0 24px; }
+
+/* nav */
+.topbar {
+  position: sticky; top: 0; z-index: 20;
+  backdrop-filter: blur(20px);
+  background: rgba(12,12,18,0.82);
+  border-bottom: 1px solid var(--border);
+}
+.topbar__inner {
+  max-width: 1040px; margin: 0 auto; padding: 16px 24px;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+}
+.back {
+  color: var(--text-secondary); text-decoration: none; font-size: 14px; font-weight: 500;
+  display: inline-flex; align-items: center; gap: 8px; transition: color .25s;
+}
+.back:hover { color: var(--text); }
+.topbar__name { font-size: 14px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--text-tertiary); }
+
+/* hero */
+.hero { padding: 88px 0 56px; }
+.badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
+  color: var(--accent-light);
+  background: rgba(139,92,246,0.1);
+  border: 1px solid rgba(139,92,246,0.25);
+  padding: 7px 14px; border-radius: 100px; margin-bottom: 26px;
+}
+.badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 8px var(--green); }
+h1 {
+  font-size: clamp(46px, 8vw, 78px);
+  font-weight: 900; letter-spacing: -0.035em; line-height: 1.02; margin-bottom: 20px;
+}
+h1 .grad {
+  background: linear-gradient(135deg, var(--accent-light), var(--green));
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+}
+.lede { font-size: clamp(17px, 2.2vw, 20px); color: var(--text-secondary); max-width: 680px; margin-bottom: 34px; }
+.lede strong { color: var(--text); font-weight: 600; }
+
+.cta { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
+.btn {
+  padding: 14px 28px; border-radius: 100px; font-size: 15px; font-weight: 600;
+  text-decoration: none; display: inline-flex; align-items: center; gap: 8px; transition: all .3s;
+}
+.btn--primary { background: linear-gradient(135deg, var(--accent), var(--accent-light)); color: #fff; }
+.btn--primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px var(--accent-glow); }
+.btn--ghost { background: var(--bg-elevated); color: var(--text); border: 1px solid var(--border); }
+.btn--ghost:hover { border-color: var(--border-hover); background: var(--bg-card-hover); }
+.hint { font-size: 13px; color: var(--text-tertiary); }
+
+/* meta strip */
+.meta {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px;
+  background: var(--border); border: 1px solid var(--border);
+  border-radius: var(--radius-md); overflow: hidden; margin: 56px 0 0;
+}
+.meta div { background: var(--bg-elevated); padding: 20px 22px; }
+.meta dt { font-size: 11px; font-weight: 600; letter-spacing: .09em; text-transform: uppercase; color: var(--text-tertiary); margin-bottom: 6px; }
+.meta dd { font-size: 16px; font-weight: 700; }
+
+/* sections */
+section.block { padding: 72px 0; }
+.eyebrow { font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--accent-light); margin-bottom: 12px; }
+h2 { font-size: clamp(28px, 4vw, 38px); font-weight: 800; letter-spacing: -0.025em; line-height: 1.15; margin-bottom: 14px; }
+.sub { color: var(--text-secondary); font-size: 16px; max-width: 640px; margin-bottom: 40px; }
+
+/* shots */
+.shots { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+figure {
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-md);
+  overflow: hidden; transition: all .35s;
+}
+figure:hover { border-color: var(--accent); transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+figure img { display: block; width: 100%; height: auto; border-bottom: 1px solid var(--border); }
+figcaption { padding: 14px 18px; font-size: 13px; color: var(--text-secondary); }
+figcaption b { color: var(--text); font-weight: 600; }
+
+/* features */
+.grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
+.feat {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius-md); padding: 26px 28px; transition: all .3s;
+}
+.feat:hover { border-color: var(--border-hover); background: var(--bg-card-hover); }
+.feat h3 { font-size: 16px; font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; }
+.feat h3 span { font-size: 18px; }
+.feat p { font-size: 14px; color: var(--text-secondary); line-height: 1.65; }
+.feat code, .panel code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: .88em; color: var(--accent-light);
+  background: rgba(139,92,246,0.1); padding: 1px 6px; border-radius: 6px;
+}
+
+/* panel */
+.panel {
+  background: linear-gradient(135deg, var(--bg-card), var(--bg-elevated));
+  border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 36px 38px;
+}
+.panel h3 { font-size: 19px; font-weight: 700; margin-bottom: 14px; }
+.panel p { color: var(--text-secondary); font-size: 15px; margin-bottom: 16px; }
+.panel p:last-child { margin-bottom: 0; }
+.rule { border: 0; border-top: 1px solid var(--border); margin: 26px 0; }
+pre {
+  background: #0a0a10; border: 1px solid var(--border); border-radius: var(--radius-sm);
+  padding: 18px 20px; overflow-x: auto; margin-bottom: 16px;
+}
+pre code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 13px; color: #e4e4ec; background: none; padding: 0; line-height: 1.7;
+}
+pre code .c { color: var(--text-tertiary); }
+
+/* table */
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { text-align: left; padding: 13px 0; border-bottom: 1px solid var(--border); vertical-align: top; }
+th { font-size: 11px; letter-spacing: .09em; text-transform: uppercase; color: var(--text-tertiary); font-weight: 600; }
+td:first-child { color: var(--text-secondary); width: 42%; }
+td:last-child { font-weight: 600; }
+
+/* footer */
+footer { border-top: 1px solid var(--border); padding: 40px 0 64px; margin-top: 24px; }
+footer .row { display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap; }
+footer p { font-size: 13px; color: var(--text-tertiary); }
+footer a { color: var(--text-secondary); text-decoration: none; font-size: 14px; font-weight: 500; }
+footer a:hover { color: var(--accent-light); }
+
+@media (max-width: 760px) {
+  .meta { grid-template-columns: repeat(2, 1fr); }
+  .shots, .grid { grid-template-columns: 1fr; }
+  .hero { padding: 56px 0 40px; }
+  section.block { padding: 52px 0; }
+  .panel { padding: 26px 24px; }
+  td:first-child { width: 50%; }
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar__inner">
+    <a class="back" href="/">← Arfan</a>
+    <span class="topbar__name">IMRI</span>
+  </div>
+</div>
+
+<main class="wrap">
+
+  <div class="hero">
+    <span class="badge"><span class="dot"></span>Shipped · v1.0.0</span>
+    <h1>IMRI<span class="grad">.</span></h1>
+    <p class="lede">A complete, self-contained replacement for the paper borrowing register in a school library. It runs on <strong>one Windows PC</strong>, with <strong>no internet</strong>, no installer, no database server and no account to sign up for. The catalogue, the members, the loans, the fines, the reports — all of it lives in <strong>a single SQLite file</strong> you can copy onto a USB stick.</p>
+    <div class="cta">
+      <a class="btn btn--primary" href="https://github.com/AArfanAyub/imri/releases/latest" target="_blank" rel="noopener noreferrer">Download for Windows ↗</a>
+      <a class="btn btn--ghost" href="https://github.com/AArfanAyub/imri" target="_blank" rel="noopener noreferrer">Source on GitHub ↗</a>
+    </div>
+    <p class="hint">9.9 MB, single <code>.exe</code> · no install · no admin rights needed · Windows 10/11</p>
+
+    <dl class="meta">
+      <div><dt>Runtime deps</dt><dd>Zero</dd></div>
+      <div><dt>Tests</dt><dd>180 passing</dd></div>
+      <div><dt>Measured at</dt><dd>200k books</dd></div>
+      <div><dt>Network access</dt><dd>None</dd></div>
+    </dl>
+  </div>
+
+  <section class="block">
+    <p class="eyebrow">Screens</p>
+    <h2>What a librarian actually sees</h2>
+    <p class="sub">Four of the twenty screens. Dark and light themes, English, Bahasa Melayu and 中文 throughout.</p>
+    <div class="shots">
+      <figure>
+        <img src="../assets/imri-dashboard.png" alt="IMRI dashboard showing collection size, active loans and overdue counts" loading="lazy" decoding="async" width="1440" height="900">
+        <figcaption><b>Dashboard</b> — the morning glance: what is out, what is late, what came back.</figcaption>
+      </figure>
+      <figure>
+        <img src="../assets/imri-catalogue.png" alt="IMRI catalogue list with ISBN, Dewey number and copy availability" loading="lazy" decoding="async" width="1440" height="900">
+        <figcaption><b>Catalogue</b> — ISBN and Dewey validation, per-copy accession numbers and location.</figcaption>
+      </figure>
+      <figure>
+        <img src="../assets/imri-counter.png" alt="IMRI circulation counter with a barcode scan field" loading="lazy" decoding="async" width="1440" height="900">
+        <figcaption><b>Counter</b> — scan to issue or return. The field never loses focus, so a queue runs without the mouse.</figcaption>
+      </figure>
+      <figure>
+        <img src="../assets/imri-reports.png" alt="IMRI reports screen with export to CSV and PDF" loading="lazy" decoding="async" width="1440" height="900">
+        <figcaption><b>Reports</b> — collection, circulation, membership, overdue and fines, monthly trend.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="block">
+    <p class="eyebrow">Scope</p>
+    <h2>What it does</h2>
+    <p class="sub">Everything a resource centre needs, and nothing it has to maintain.</p>
+    <div class="grid">
+      <div class="feat">
+        <h3><span>📖</span>Catalogue</h3>
+        <p>Titles, authors, publishers, ISBN-10/13 with real check-digit validation, Dewey numbers, call numbers, subjects, cover images and per-copy records with their own barcode, accession number, location and condition. Duplicate detection by ISBN and title.</p>
+      </div>
+      <div class="feat">
+        <h3><span>👥</span>Members</h3>
+        <p>Students and staff, class lists, IC numbers with validation, membership and expiry dates, suspension, a 360° profile showing loans, fines and reading list in one place, and a printable membership card with a QR code.</p>
+      </div>
+      <div class="feat">
+        <h3><span>🔄</span>Counter</h3>
+        <p>Issue and return by scanning a barcode or typing an accession number. Every guard is enforced server-side: loan limits, suspended members, copies already out, copies held for someone else, duplicate active loans.</p>
+      </div>
+      <div class="feat">
+        <h3><span>💰</span>Fines</h3>
+        <p>Per-day rates from settings, calculated from <em>local</em> dates — never UTC, or every evening in UTC+8 would be a day early. Part payments with sequential receipt numbers, waivers that require a written reason, full payment history per loan.</p>
+      </div>
+      <div class="feat">
+        <h3><span>📋</span>Reservations</h3>
+        <p>A FIFO queue per title with gapless positions. When the last copy comes back the head of the queue is promoted to <code>ready</code>, the copy is set aside, and the hold expires on its own after the configured number of days.</p>
+      </div>
+      <div class="feat">
+        <h3><span>🏷️</span>Labels</h3>
+        <p>QR codes — versions 1–10, with Reed–Solomon error correction and mask penalty scoring — and Code 39 barcodes, rendered as SVG and printed as A4 sheets. Both encoders written from scratch.</p>
+      </div>
+      <div class="feat">
+        <h3><span>🔐</span>Admin</h3>
+        <p>Four roles — admin, librarian, assistant, viewer — with a capability matrix enforced on every endpoint. An append-only audit log that the database itself refuses to update or delete. Verified backups with a SHA-256 manifest and a guarded restore.</p>
+      </div>
+      <div class="feat">
+        <h3><span>💳</span>Hardware</h3>
+        <p>Optional PC/SC smart-card readers via <code>ctypes</code> and <code>winscard.dll</code>, so a student card can be tapped instead of typing a code. IMRI works fully without it.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <p class="eyebrow">The constraint</p>
+    <h2>Built for the school that has nothing</h2>
+    <p class="sub">This is the design decision everything else follows from.</p>
+    <div class="panel">
+      <p>A resource centre may have <strong>no internet, no administrator rights, and a machine from 2014</strong>. Every dependency is a reason the software stops working for them. So there are none.</p>
+      <p>The backend is Python's standard library — <code>http.server</code>, <code>sqlite3</code>, <code>hashlib</code>, <code>ctypes</code>, <code>zipfile</code>, <code>csv</code>. There is no <code>requirements.txt</code>, because there are no requirements. The frontend is hand-written HTML, CSS and ES modules: no framework, no bundler, no <code>node_modules</code>, no CDN. Even the PDF writer and the QR encoder are written from scratch rather than installed.</p>
+      <p>IMRI binds to <code>127.0.0.1</code> only. It is not reachable from the network, and it does not phone home — no telemetry, no update check, no external request of any kind. You can run it on a PC that has never been online, which is exactly the PC it was built for.</p>
+    </div>
+  </section>
+
+  <section class="block">
+    <p class="eyebrow">Detail</p>
+    <h2>The numbers, without rounding up</h2>
+    <table>
+      <thead><tr><th>Claim</th><th>Measured</th></tr></thead>
+      <tbody>
+        <tr><td>Test suite</td><td>180 tests, six modules, standard library only</td></tr>
+        <tr><td>Runtime dependencies</td><td>None. PyInstaller is needed to build, never to run.</td></tr>
+        <tr><td>Runtime binary</td><td>9.9 MB, PyInstaller one-file</td></tr>
+        <tr><td>Scale tested</td><td>10,000 members, 200,000 books</td></tr>
+        <tr><td>Full-collection report</td><td>2.9 s at 200,000 books</td></tr>
+        <tr><td>Concurrent write p95</td><td>229 ms against a 250 ms budget</td></tr>
+        <tr><td>Interface languages</td><td>English, Bahasa Melayu, 中文 — 913 keys each</td></tr>
+        <tr><td>Outbound requests</td><td>Zero, by design</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="block">
+    <p class="eyebrow">Run it</p>
+    <h2>Three ways in</h2>
+    <div class="grid">
+      <div class="panel">
+        <h3>The packaged build</h3>
+        <p>Download <code>IMRI.exe</code>, put it in a folder, double-click it. It starts a private web server on a free port on <code>127.0.0.1</code>, opens a chromeless window, and creates <code>data\</code> beside itself — so the whole thing is portable. Copy the folder to another PC and the library goes with it.</p>
+      </div>
+      <div class="panel">
+        <h3>From source</h3>
+        <p>Python 3.11 or newer. No <code>pip install</code>.</p>
+<pre><code>python main.py
+<span class="c">:: or, without the app window:</span>
+python main.py --no-window
+<span class="c">:: self-test a deployment and exit:</span>
+python main.py --check</code></pre>
+      </div>
+    </div>
+    <div class="panel" style="margin-top:18px">
+      <h3>Backing up</h3>
+      <p>Admin → Backup → Create. To move a library to another PC, copy the entire <code>data\</code> folder. Restoring verifies the archive's SHA-256 manifest, refuses anything that would write outside the data folder, snapshots the current database first, and re-runs an integrity check afterwards.</p>
+      <hr class="rule">
+      <p>Full documentation — architecture, build, tests, release process, and the v2 backlog — is in <a href="https://github.com/AArfanAyub/imri/blob/main/DEVELOPING.md" target="_blank" rel="noopener noreferrer" style="color:var(--accent-light)">DEVELOPING.md</a>.</p>
+    </div>
+  </section>
+
+  <footer>
+    <div class="row">
+      <p>IMRI 1.0.0 · Built by Arfan · Windows · offline by design</p>
+      <a href="/">← Back to portfolio</a>
+    </div>
+  </footer>
+
+</main>
+
+</body>
+</html>

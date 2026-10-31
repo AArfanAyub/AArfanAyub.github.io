@@ -559,6 +559,16 @@ section {
   border: 1px solid var(--border);
 }
 .project-links .link-secondary:hover { border-color: var(--border-hover); background: var(--bg-card-hover); }
+/* Two project cards stack in one section; without this they touch. */
+.project-card + .project-card { margin-top: 24px; }
+.project-desc code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.9em;
+  color: var(--accent-light);
+  background: rgba(139,92,246,0.1);
+  padding: 1px 6px;
+  border-radius: 6px;
+}
 
 /* ===== MEMORY ===== */
 .memory-section { background: linear-gradient(180deg, transparent, rgba(139,92,246,0.03), transparent); }
@@ -964,6 +974,30 @@ img[loading=lazy] { content-visibility: auto; }
     <div class="project-links">
       <a href="https://github.com/AArfanAyub/jelas" target="_blank" rel="noopener noreferrer" class="link-primary">View on GitHub ↗</a>
       <a href="https://github.com/AArfanAyub/jelas/releases" target="_blank" rel="noopener noreferrer" class="link-secondary">Download APK ↗</a>
+    </div>
+  </div>
+  <div class="project-card">
+    <div class="project-header">
+      <div class="project-icon">📚</div>
+      <div class="project-info">
+        <h3>IMRI</h3>
+        <p class="project-tagline">Offline Library Management for School Resource Centres</p>
+      </div>
+    </div>
+    <div class="project-tags">
+      <span class="project-tag">Python</span>
+      <span class="project-tag">Standard Library Only</span>
+      <span class="project-tag">SQLite</span>
+      <span class="project-tag">Offline-First</span>
+      <span class="project-tag">Vanilla JS</span>
+      <span class="project-tag">Zero Dependencies</span>
+      <span class="project-tag">180 Tests</span>
+    </div>
+    <p class="project-desc">A complete replacement for the paper borrowing register in a school library. It runs on one Windows PC with no internet, no installer, no database server and no account — the catalogue, members, loans, fines, reservations and reports all live in a single SQLite file you can carry on a USB stick. Built for Malaysian schools: Dewey classification, accession numbers, Bahasa Melayu / English / 中文 interface, RM currency and per-day fines. The backend is Python's standard library with no <code>pip install</code>; the frontend is hand-written ES modules with no bundler and no CDN. It binds to <code>127.0.0.1</code> only and makes no external request of any kind, so it works on a PC that has never been online.</p>
+    <div class="project-links">
+      <a href="/imri/" class="link-primary">Project Page →</a>
+      <a href="https://github.com/AArfanAyub/imri" target="_blank" rel="noopener noreferrer" class="link-secondary">View on GitHub ↗</a>
+      <a href="https://github.com/AArfanAyub/imri/releases/latest" target="_blank" rel="noopener noreferrer" class="link-secondary">Download for Windows ↗</a>
     </div>
   </div>
 </section>
