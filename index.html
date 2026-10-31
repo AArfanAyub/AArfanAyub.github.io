@@ -8,7 +8,7 @@
 <meta property="og:description" content="Environmental management student @ UPM · Community volunteer · Building things that matter">
 <meta property="og:type" content="website">
 <title>Arfan — Portfolio</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍋</text></svg>">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2032%2032%27%3E%3Cdefs%3E%3ClinearGradient%20id%3D%27g%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%271%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%238b5cf6%27%2F%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%2334d399%27%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%2732%27%20height%3D%2732%27%20rx%3D%278%27%20fill%3D%27url%28%23g%29%27%2F%3E%3Cpath%20fill-rule%3D%27evenodd%27%20fill%3D%27%23fff%27%20d%3D%27M16%206%20L25%2026%20H21.2%20L19.4%2021.5%20H12.6%20L10.8%2026%20H7%20Z%20M16%2011.8%20L14.1%2017%20H17.9%20Z%27%2F%3E%3C%2Fsvg%3E">
 <style>
 /* Inter, self-hosted. It used to be an @import from fonts.googleapis.com, which
    the CSP in _headers blocked outright (default-src 'none', no font-src), so
@@ -105,13 +105,28 @@ nav.scrolled {
   align-items: center;
 }
 .logo {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  text-decoration: none;
   font-weight: 800;
   font-size: 20px;
   letter-spacing: -0.5px;
+}
+.logo-mark {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  display: block;
+  flex: 0 0 auto;
+  box-shadow: 0 4px 14px rgba(139,92,246,0.4);
+}
+.logo-text {
   background: linear-gradient(135deg, var(--accent-light), var(--green));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  color: transparent;
 }
 nav ul {
   display: flex;
@@ -119,6 +134,7 @@ nav ul {
   gap: 8px;
 }
 nav ul a {
+  position: relative;
   color: var(--text-secondary);
   text-decoration: none;
   font-size: 14px;
@@ -130,6 +146,17 @@ nav ul a {
 nav ul a:hover {
   color: var(--text);
   background: var(--bg-card);
+}
+#navMenu a.active { color: var(--text); }
+#navMenu a.active::after {
+  content: '';
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: 2px;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--accent), var(--green));
 }
 
 /* Mobile menu. Below 900px the link list used to be display:none with nothing
@@ -853,12 +880,128 @@ footer {
 }
 
 /* ===== ANIMATIONS ===== */
+
+/* Scroll progress bar — fills as you move down the page */
+.scroll-progress {
+  position: fixed;
+  top: 0; left: 0;
+  height: 3px;
+  width: 100%;
+  z-index: 200;
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  background: linear-gradient(90deg, var(--accent), var(--green), var(--accent-light));
+  transition: transform 0.1s linear;
+  will-change: transform;
+}
+
+/* Refined reveal — longer travel, a real ease-out curve, not a flat fade */
 .fade-in {
   opacity: 0;
-  transform: translateY(30px);
-  transition: opacity 0.8s ease, transform 0.8s ease;
+  transform: translateY(34px);
+  transition: opacity 0.9s cubic-bezier(0.22,1,0.36,1), transform 0.9s cubic-bezier(0.22,1,0.36,1);
 }
-.fade-in.visible { opacity: 1; transform: translateY(0); }
+.fade-in.visible { opacity: 1; transform: none; }
+
+/* Staggered rise for the children of a revealed grid — the "modern" feel */
+@keyframes riseIn {
+  from { opacity: 0; transform: translateY(30px) scale(0.98); }
+  to   { opacity: 1; transform: none; }
+}
+.fade-in.visible .cards-grid > *,
+.fade-in.visible .moments-grid > *,
+.fade-in.visible .memory-grid > *,
+.fade-in.visible .skills-grid > *,
+.fade-in.visible .lang-grid > *,
+.fade-in.visible .about-grid > * {
+  animation: riseIn 0.7s cubic-bezier(0.22,1,0.36,1) both;
+}
+.fade-in.visible .cards-grid > *:nth-child(2),
+.fade-in.visible .moments-grid > *:nth-child(2),
+.fade-in.visible .memory-grid > *:nth-child(2),
+.fade-in.visible .skills-grid > *:nth-child(2),
+.fade-in.visible .lang-grid > *:nth-child(2) { animation-delay: 0.06s; }
+.fade-in.visible .cards-grid > *:nth-child(3),
+.fade-in.visible .moments-grid > *:nth-child(3),
+.fade-in.visible .memory-grid > *:nth-child(3),
+.fade-in.visible .skills-grid > *:nth-child(3),
+.fade-in.visible .lang-grid > *:nth-child(3) { animation-delay: 0.12s; }
+.fade-in.visible .cards-grid > *:nth-child(4),
+.fade-in.visible .moments-grid > *:nth-child(4),
+.fade-in.visible .memory-grid > *:nth-child(4),
+.fade-in.visible .skills-grid > *:nth-child(4),
+.fade-in.visible .lang-grid > *:nth-child(4) { animation-delay: 0.18s; }
+.fade-in.visible .cards-grid > *:nth-child(5),
+.fade-in.visible .moments-grid > *:nth-child(5),
+.fade-in.visible .skills-grid > *:nth-child(5),
+.fade-in.visible .lang-grid > *:nth-child(5) { animation-delay: 0.24s; }
+.fade-in.visible .cards-grid > *:nth-child(6),
+.fade-in.visible .moments-grid > *:nth-child(6),
+.fade-in.visible .skills-grid > *:nth-child(6),
+.fade-in.visible .lang-grid > *:nth-child(6) { animation-delay: 0.30s; }
+.fade-in.visible .cards-grid > *:nth-child(n+7) { animation-delay: 0.36s; }
+.fade-in.visible .moments-grid > *:nth-child(n+7) { animation-delay: 0.36s; }
+.fade-in.visible .skills-grid > *:nth-child(n+7) { animation-delay: 0.36s; }
+.fade-in.visible .lang-grid > *:nth-child(n+7) { animation-delay: 0.36s; }
+
+/* Hero loads in on first paint, independent of scroll */
+@keyframes heroRise {
+  from { opacity: 0; transform: translateY(26px); }
+  to   { opacity: 1; transform: none; }
+}
+.hero h1, .hero .headline, .hero .location, .hero .hero-btns {
+  animation: heroRise 0.9s cubic-bezier(0.22,1,0.36,1) both;
+}
+.hero-photo { animation: heroRise 0.9s cubic-bezier(0.22,1,0.36,1) both; animation-delay: 0.05s; }
+.hero h1 { animation-delay: 0.15s; }
+.hero .headline { animation-delay: 0.28s; }
+.hero .location { animation-delay: 0.38s; }
+.hero .hero-btns { animation-delay: 0.48s; }
+
+/* Scroll cue — bounces, then fades as you leave the hero */
+.scroll-cue {
+  position: absolute;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  width: 26px;
+  height: 42px;
+  border: 2px solid var(--border-hover);
+  border-radius: 14px;
+  display: flex;
+  justify-content: center;
+  padding-top: 7px;
+  opacity: 0.7;
+  transition: opacity 0.3s;
+  z-index: 2;
+}
+.scroll-cue span {
+  width: 4px;
+  height: 8px;
+  border-radius: 2px;
+  background: var(--accent);
+  animation: cue 1.6s ease-in-out infinite;
+}
+@keyframes cue {
+  0%   { transform: translateY(0); opacity: 1; }
+  60%  { transform: translateY(12px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 0; }
+}
+
+/* Respect users who ask for less motion */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .fade-in, .fade-in.visible { opacity: 1 !important; transform: none !important; transition: none; }
+  .fade-in.visible .cards-grid > *,
+  .fade-in.visible .moments-grid > *,
+  .fade-in.visible .memory-grid > *,
+  .fade-in.visible .skills-grid > *,
+  .fade-in.visible .lang-grid > * { animation: none !important; opacity: 1 !important; transform: none !important; }
+  .hero h1, .hero .headline, .hero .location, .hero .hero-btns, .hero-photo { animation: none !important; opacity: 1 !important; transform: none !important; }
+  .hero-photo-wrap::before { animation: none; }
+  .scroll-cue span { animation: none; }
+  .scroll-progress { transition: none; }
+}
 
 /* ===== RESPONSIVE ===== */
 @media(max-width: 900px) {
@@ -908,14 +1051,23 @@ footer {
 }
 
 img { max-width: 100%; height: auto; }
-img[loading=lazy] { content-visibility: auto; }
 </style>
 </head>
 <body>
 
+<div class="scroll-progress" id="scrollProgress"></div>
 <nav id="nav">
   <div class="nav-inner">
-    <div class="logo">Arfan</div>
+    <a class="logo" href="#top" aria-label="Arfan — home">
+      <svg class="logo-mark" viewBox="0 0 32 32" aria-hidden="true">
+        <defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#8b5cf6"/><stop offset="1" stop-color="#34d399"/>
+        </linearGradient></defs>
+        <rect width="32" height="32" rx="8" fill="url(#lg)"/>
+        <path fill-rule="evenodd" fill="#fff" d="M16 6 L25 26 H21.2 L19.4 21.5 H12.6 L10.8 26 H7 Z M16 11.8 L14.1 17 H17.9 Z"/>
+      </svg>
+      <span class="logo-text">Arfan</span>
+    </a>
     <button class="nav-toggle" id="navToggle" type="button"
             aria-label="Open menu" aria-expanded="false" aria-controls="navMenu">
       <span></span><span></span><span></span>
@@ -933,7 +1085,7 @@ img[loading=lazy] { content-visibility: auto; }
 </nav>
 
 <!-- HERO -->
-<div class="hero">
+<div class="hero" id="top">
   <div class="hero-content">
     <div class="hero-photo-wrap">
       <div class="hero-photo">
@@ -955,6 +1107,7 @@ img[loading=lazy] { content-visibility: auto; }
       <a href="#projects" class="btn btn-secondary">See My Work</a>
     </div>
   </div>
+  <a class="scroll-cue" href="#about" aria-label="Scroll to content"><span></span></a>
 </div>
 
 <!-- ABOUT -->
@@ -1419,25 +1572,46 @@ img[loading=lazy] { content-visibility: auto; }
 </footer>
 
 <script>
-const observer = new IntersectionObserver(e => {
-  e.forEach(t => { if(t.isIntersecting) t.target.classList.add('visible'); });
-}, { threshold: 0.1 });
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// Reveal on scroll
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(t => { if(t.isIntersecting) t.target.classList.add('visible'); });
+}, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
 document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
 
-window.addEventListener('scroll', () => {
-  const n = document.getElementById('nav');
-  if(window.scrollY > 40) n.classList.add('scrolled');
-  else n.classList.remove('scrolled');
-});
-
-const hp = document.querySelector('.hero-photo-wrap');
-if(hp) {
-  window.addEventListener('scroll', () => {
-    const s = window.scrollY;
-    if(s < window.innerHeight) hp.style.transform = `translateY(${s * 0.1}px)`;
+// Active section in the nav — the link for whatever is centred in the viewport
+const navLinks = Array.from(document.querySelectorAll('#navMenu a'));
+const navSections = navLinks.map(a => document.querySelector(a.getAttribute('href')));
+const navObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if(e.isIntersecting) {
+      const id = '#' + e.target.id;
+      navLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === id));
+    }
   });
-}
+}, { rootMargin: '-45% 0px -50% 0px', threshold: 0 });
+navSections.forEach(s => s && navObs.observe(s));
 
+// One scroll handler drives the progress bar, condensed nav, parallax and cue
+const progress = document.getElementById('scrollProgress');
+const scrollCue = document.querySelector('.scroll-cue');
+const heroWrap = document.querySelector('.hero-photo-wrap');
+function onScroll() {
+  const y = window.scrollY;
+  const max = document.documentElement.scrollHeight - window.innerHeight;
+  if(progress) progress.style.transform = 'scaleX(' + (max > 0 ? y / max : 0) + ')';
+  const nav = document.getElementById('nav');
+  if(nav) nav.classList.toggle('scrolled', y > 40);
+  if(scrollCue) scrollCue.style.opacity = String(Math.max(0, 0.7 - y / 240));
+  if(!reduceMotion && heroWrap && y < window.innerHeight) {
+    heroWrap.style.transform = 'translateY(' + (y * 0.12) + 'px)';
+  }
+}
+window.addEventListener('scroll', onScroll, { passive: true });
+onScroll();
+
+// Hero photo rotation
 const slides = document.querySelectorAll('.hero-slide');
 let si = 0;
 if(slides.length > 1) {
