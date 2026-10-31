@@ -881,19 +881,53 @@ footer {
 
 /* ===== ANIMATIONS ===== */
 
-/* Scroll progress bar — fills as you move down the page */
-.scroll-progress {
+/* Scroll dots — slick right-side section indicator (replaces the top bar) */
+.scroll-dots {
   position: fixed;
-  top: 0; left: 0;
-  height: 3px;
-  width: 100%;
+  right: 22px;
+  top: 50%;
+  transform: translateY(-50%);
   z-index: 200;
-  transform: scaleX(0);
-  transform-origin: 0 50%;
-  background: linear-gradient(90deg, var(--accent), var(--green), var(--accent-light));
-  transition: transform 0.1s linear;
-  will-change: transform;
+  width: 12px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
 }
+.scroll-dots a {
+  position: relative;
+  width: 11px; height: 11px;
+  border-radius: 50%;
+  background: rgba(139,92,246,0.22);
+  box-shadow: inset 0 0 0 1px rgba(167,139,250,0.45);
+  transition: transform .4s cubic-bezier(.22,1,.36,1), background .4s, box-shadow .4s;
+}
+.scroll-dots a:hover { background: rgba(139,92,246,0.55); }
+.scroll-dots a.active {
+  background: linear-gradient(135deg, var(--accent), var(--green));
+  box-shadow: 0 0 0 4px rgba(139,92,246,0.16), 0 3px 12px rgba(139,92,246,0.45);
+  transform: scale(1.55);
+}
+/* Floating label on hover */
+.scroll-dots a::after {
+  content: attr(data-label);
+  position: absolute;
+  right: 26px; top: 50%;
+  transform: translateY(-50%) translateX(8px);
+  white-space: nowrap;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .02em;
+  color: var(--text);
+  background: var(--bg-card);
+  border: 1px solid rgba(139,92,246,0.25);
+  padding: 4px 11px;
+  border-radius: 999px;
+  opacity: 0; pointer-events: none;
+  transition: opacity .25s, transform .25s;
+}
+.scroll-dots a:hover::after { opacity: 1; transform: translateY(-50%) translateX(0); }
 
 /* Refined reveal — longer travel, a real ease-out curve, not a flat fade */
 .fade-in {
@@ -1000,7 +1034,8 @@ footer {
   .hero h1, .hero .headline, .hero .location, .hero .hero-btns, .hero-photo { animation: none !important; opacity: 1 !important; transform: none !important; }
   .hero-photo-wrap::before { animation: none; }
   .scroll-cue span { animation: none; }
-  .scroll-progress { transition: none; }
+  .scroll-dots a { transition: none; }
+  .scroll-dots a.active { transform: none; }
 }
 
 /* ===== RESPONSIVE ===== */
@@ -1051,11 +1086,24 @@ footer {
 }
 
 img { max-width: 100%; height: auto; }
+
+/* Hide the right-side dots on small screens — the mobile menu handles nav */
+@media(max-width: 900px) {
+  .scroll-dots { display: none; }
+}
 </style>
 </head>
 <body>
 
-<div class="scroll-progress" id="scrollProgress"></div>
+<nav class="scroll-dots" id="scrollDots" aria-label="Section navigation">
+  <a href="#about" data-label="About" aria-label="Go to About"></a>
+  <a href="#education" data-label="Education" aria-label="Go to Education"></a>
+  <a href="#projects" data-label="Projects" aria-label="Go to Projects"></a>
+  <a href="#experience" data-label="Experience" aria-label="Go to Experience"></a>
+  <a href="#moments" data-label="Moments" aria-label="Go to Moments"></a>
+  <a href="#skills" data-label="Skills" aria-label="Go to Skills"></a>
+  <a href="#contact" data-label="Contact" aria-label="Go to Contact"></a>
+</nav>
 <nav id="nav">
   <div class="nav-inner">
     <a class="logo" href="#top" aria-label="Arfan — home">
@@ -1580,27 +1628,26 @@ const observer = new IntersectionObserver(entries => {
 }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
 document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
 
-// Active section in the nav — the link for whatever is centred in the viewport
+// Active section tracking — highlights the nav link AND the right-side scroll dots
 const navLinks = Array.from(document.querySelectorAll('#navMenu a'));
 const navSections = navLinks.map(a => document.querySelector(a.getAttribute('href')));
+const dotLinks = Array.from(document.querySelectorAll('#scrollDots a'));
 const navObs = new IntersectionObserver(entries => {
   entries.forEach(e => {
     if(e.isIntersecting) {
       const id = '#' + e.target.id;
       navLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === id));
+      dotLinks.forEach(d => d.classList.toggle('active', d.getAttribute('href') === id));
     }
   });
 }, { rootMargin: '-45% 0px -50% 0px', threshold: 0 });
 navSections.forEach(s => s && navObs.observe(s));
 
-// One scroll handler drives the progress bar, condensed nav, parallax and cue
-const progress = document.getElementById('scrollProgress');
+// One scroll handler drives the condensed nav, parallax and scroll cue
 const scrollCue = document.querySelector('.scroll-cue');
 const heroWrap = document.querySelector('.hero-photo-wrap');
 function onScroll() {
   const y = window.scrollY;
-  const max = document.documentElement.scrollHeight - window.innerHeight;
-  if(progress) progress.style.transform = 'scaleX(' + (max > 0 ? y / max : 0) + ')';
   const nav = document.getElementById('nav');
   if(nav) nav.classList.toggle('scrolled', y > 40);
   if(scrollCue) scrollCue.style.opacity = String(Math.max(0, 0.7 - y / 240));
