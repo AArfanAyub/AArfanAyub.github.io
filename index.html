@@ -10,7 +10,26 @@
 <title>Arfan — Portfolio</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍋</text></svg>">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+/* Inter, self-hosted. It used to be an @import from fonts.googleapis.com, which
+   the CSP in _headers blocked outright (default-src 'none', no font-src), so
+   the whole site silently rendered in fallback fonts. Serving the files from
+   this origin keeps the CSP strict and drops two third-party requests. */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 300 900;
+  font-display: swap;
+  src: url('assets/fonts/inter-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 300 900;
+  font-display: swap;
+  src: url('assets/fonts/inter-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
 
 :root {
   --bg: #0c0c12;
@@ -112,6 +131,33 @@ nav ul a:hover {
   color: var(--text);
   background: var(--bg-card);
 }
+
+/* Mobile menu. Below 900px the link list used to be display:none with nothing
+   in its place, which left phones and tablets with no navigation at all. */
+.nav-toggle {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.nav-toggle span {
+  display: block;
+  width: 18px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--text);
+  transition: transform .3s ease, opacity .2s ease;
+}
+.nav-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
 /* ===== HERO ===== */
 .hero {
@@ -822,7 +868,35 @@ footer {
   .cards-grid { grid-template-columns: 1fr; }
   .hero h1 { font-size: 40px; }
   .section-title { font-size: 32px; }
+
+  .nav-toggle { display: flex; }
   nav ul { display: none; }
+  nav.menu-open ul {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 16px;
+    right: 16px;
+    padding: 10px;
+    /* Solid, not translucent. A dropdown has to be legible over whatever
+       section happens to be behind it, so it does not rely on a blur. */
+    background: #14141c;
+    border: 1px solid var(--border-hover);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+  }
+  nav.menu-open ul a { display: block; padding: 13px 16px; border-radius: 10px; font-size: 15px; }
+  nav.menu-open {
+    background: rgba(12,12,18,0.97);
+    -webkit-backdrop-filter: blur(24px);
+    backdrop-filter: blur(24px);
+    border-bottom: 1px solid var(--border);
+  }
+  nav.menu-open .nav-toggle span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  nav.menu-open .nav-toggle span:nth-child(2) { opacity: 0; }
+  nav.menu-open .nav-toggle span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 }
 @media(max-width: 600px) {
   .moments-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
@@ -842,7 +916,11 @@ img[loading=lazy] { content-visibility: auto; }
 <nav id="nav">
   <div class="nav-inner">
     <div class="logo">Arfan</div>
-    <ul>
+    <button class="nav-toggle" id="navToggle" type="button"
+            aria-label="Open menu" aria-expanded="false" aria-controls="navMenu">
+      <span></span><span></span><span></span>
+    </button>
+    <ul id="navMenu">
       <li><a href="#about">About</a></li>
       <li><a href="#education">Education</a></li>
       <li><a href="#projects">Projects</a></li>
@@ -998,6 +1076,30 @@ img[loading=lazy] { content-visibility: auto; }
       <a href="/imri/" class="link-primary">Project Page →</a>
       <a href="https://github.com/AArfanAyub/imri" target="_blank" rel="noopener noreferrer" class="link-secondary">View on GitHub ↗</a>
       <a href="https://github.com/AArfanAyub/imri/releases/latest" target="_blank" rel="noopener noreferrer" class="link-secondary">Download for Windows ↗</a>
+    </div>
+  </div>
+  <div class="project-card">
+    <div class="project-header">
+      <div class="project-icon">🧾</div>
+      <div class="project-info">
+        <h3>Serambi POS Pro</h3>
+        <p class="project-tagline">Offline Point of Sale with Real Double-Entry Accounting</p>
+      </div>
+    </div>
+    <div class="project-tags">
+      <span class="project-tag">Windows</span>
+      <span class="project-tag">Offline</span>
+      <span class="project-tag">Point of Sale</span>
+      <span class="project-tag">Double-Entry Accounting</span>
+      <span class="project-tag">SQLite</span>
+      <span class="project-tag">Inventory Ledger</span>
+      <span class="project-tag">E-Invoicing</span>
+    </div>
+    <p class="project-desc">A desktop point-of-sale for small and medium businesses that works with no internet connection at all — one installer, one PC, no account, no cloud, no subscription. What separates it from a till is what sits underneath: a real double-entry ledger, so every sale, void and refund posts a journal entry automatically. Debits always equal credits, enforced at the database level rather than by the application remembering to do it. Posted entries cannot be edited or deleted, only reversed, so the record of what actually happened survives. Stock is tracked through a movement ledger instead of an editable number, which means the current quantity is always explainable. Shifts reconcile against the expected drawer, and exports go to CSV, Excel and PDF.</p>
+    <div class="project-links">
+      <a href="/serambi/" class="link-primary">Project Page →</a>
+      <a href="https://github.com/AArfanAyub/serambi-pos-pro" target="_blank" rel="noopener noreferrer" class="link-secondary">Release Notes ↗</a>
+      <a href="https://github.com/AArfanAyub/serambi-pos-pro/releases/latest" target="_blank" rel="noopener noreferrer" class="link-secondary">Download Installer ↗</a>
     </div>
   </div>
 </section>
@@ -1344,6 +1446,35 @@ if(slides.length > 1) {
     si = (si + 1) % slides.length;
     slides[si].classList.add('active');
   }, 3000);
+}
+
+// Mobile menu — the link list is hidden below 900px, so this is the only way
+// to navigate there. Closes on link tap, outside click, Escape and resize.
+const navEl = document.getElementById('nav');
+const navBtn = document.getElementById('navToggle');
+const navMenu = document.getElementById('navMenu');
+if(navEl && navBtn && navMenu) {
+  const setMenu = open => {
+    navEl.classList.toggle('menu-open', open);
+    navBtn.setAttribute('aria-expanded', String(open));
+    navBtn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+  };
+  navBtn.addEventListener('click', e => {
+    e.stopPropagation();
+    setMenu(!navEl.classList.contains('menu-open'));
+  });
+  navMenu.addEventListener('click', e => {
+    if(e.target.closest('a')) setMenu(false);
+  });
+  document.addEventListener('click', e => {
+    if(!navEl.contains(e.target)) setMenu(false);
+  });
+  document.addEventListener('keydown', e => {
+    if(e.key === 'Escape') setMenu(false);
+  });
+  window.addEventListener('resize', () => {
+    if(window.innerWidth > 900) setMenu(false);
+  });
 }
 </script>
 

@@ -10,11 +10,20 @@ Built as a single static page. No frameworks, no build step, no external depende
 
 ```
 /
-├── index.html     # the website (entry point)
-├── assets/        # 49 photos (WebP)
-├── _headers       # security + cache rules (Cloudflare Pages / Netlify)
-└── robots.txt     # search engine rules
+├── index.html          # the website (entry point)
+├── imri/               # project page: IMRI, offline library management
+├── serambi/            # project page: Serambi POS Pro, offline point of sale
+├── assets/
+│   ├── p-01…p-49.webp  # photos
+│   ├── imri-*.png      # IMRI screenshots
+│   └── fonts/          # Inter, self-hosted (woff2, 2 subsets)
+├── _headers            # security + cache rules (Cloudflare Pages / Netlify)
+└── robots.txt          # search engine rules
 ```
+
+Each project page is fully self-contained: its own inline CSS, its own
+`@font-face`, no shared stylesheet to break. They reuse the same CSS custom
+properties so they match the main page.
 
 ---
 
@@ -56,6 +65,13 @@ Your site goes live at `your-project.pages.dev`. The `_headers` file is applied 
 - `Permissions-Policy` (camera, microphone, location, etc. disabled)
 - `Strict-Transport-Security` (forces HTTPS)
 - Fully self-contained — zero third-party code
+
+> **Fonts used to be the exception.** The page pulled Inter from
+> `fonts.googleapis.com` via `@import`, which the CSP above blocked outright —
+> so the whole site silently rendered in fallback fonts, and every visit made a
+> request to Google that was refused. Inter is now served from `assets/fonts/`
+> and the policy carries `font-src 'self'`. Zero third-party requests is now
+> literally true, not aspirational.
 
 ## ⚡ Performance
 

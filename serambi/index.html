@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Serambi POS Pro — offline desktop point-of-sale for Windows. One installer, one PC, no account, no cloud, no subscription. Sales, inventory, double-entry accounting, shifts and e-invoicing.">
+<meta property="og:title" content="Serambi POS Pro — Offline Point of Sale">
+<meta property="og:description" content="Point of sale, inventory and double-entry accounting in one offline Windows application. No cloud, no subscription.">
+<meta property="og:type" content="article">
+<title>Serambi POS Pro — Offline Point of Sale | Arfan</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧾</text></svg>">
+<style>
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 300 900;
+  font-display: swap;
+  src: url('../assets/fonts/inter-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 300 900;
+  font-display: swap;
+  src: url('../assets/fonts/inter-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+:root {
+  --bg: #0c0c12;
+  --bg-elevated: #12121a;
+  --bg-card: #181820;
+  --bg-card-hover: #1e1e2a;
+  --text: #f5f5f7;
+  --text-secondary: #a0a0b0;
+  --text-tertiary: #6a6a7a;
+  --accent: #8b5cf6;
+  --accent-light: #a78bfa;
+  --accent-glow: rgba(139,92,246,0.3);
+  --green: #34d399;
+  --border: rgba(255,255,255,0.06);
+  --border-hover: rgba(255,255,255,0.12);
+  --shadow-lg: 0 12px 40px rgba(0,0,0,0.5);
+  --radius-sm: 12px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.65;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 45% at 50% -5%, rgba(139,92,246,0.16), transparent),
+    radial-gradient(ellipse 45% 35% at 88% 12%, rgba(52,211,153,0.06), transparent);
+  pointer-events: none;
+  z-index: 0;
+}
+.wrap { position: relative; z-index: 1; max-width: 1040px; margin: 0 auto; padding: 0 24px; }
+
+.topbar {
+  position: sticky; top: 0; z-index: 20;
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  background: rgba(12,12,18,0.82);
+  border-bottom: 1px solid var(--border);
+}
+.topbar__inner {
+  max-width: 1040px; margin: 0 auto; padding: 16px 24px;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+}
+.back {
+  color: var(--text-secondary); text-decoration: none; font-size: 14px; font-weight: 500;
+  display: inline-flex; align-items: center; gap: 8px; transition: color .25s;
+}
+.back:hover { color: var(--text); }
+.topbar__name { font-size: 14px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--text-tertiary); }
+
+.hero { padding: 88px 0 56px; }
+.badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
+  color: var(--accent-light);
+  background: rgba(139,92,246,0.1);
+  border: 1px solid rgba(139,92,246,0.25);
+  padding: 7px 14px; border-radius: 100px; margin-bottom: 26px;
+}
+.badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 8px var(--green); }
+h1 {
+  font-size: clamp(40px, 7vw, 68px);
+  font-weight: 900; letter-spacing: -0.035em; line-height: 1.04; margin-bottom: 20px;
+}
+h1 .grad {
+  background: linear-gradient(135deg, var(--accent-light), var(--green));
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+}
+.lede { font-size: clamp(17px, 2.2vw, 20px); color: var(--text-secondary); max-width: 680px; margin-bottom: 34px; }
+.lede strong { color: var(--text); font-weight: 600; }
+
+.cta { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
+.btn {
+  padding: 14px 28px; border-radius: 100px; font-size: 15px; font-weight: 600;
+  text-decoration: none; display: inline-flex; align-items: center; gap: 8px; transition: all .3s;
+}
+.btn--primary { background: linear-gradient(135deg, var(--accent), var(--accent-light)); color: #fff; }
+.btn--primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px var(--accent-glow); }
+.btn--ghost { background: var(--bg-elevated); color: var(--text); border: 1px solid var(--border); }
+.btn--ghost:hover { border-color: var(--border-hover); background: var(--bg-card-hover); }
+.hint { font-size: 13px; color: var(--text-tertiary); }
+
+.meta {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px;
+  background: var(--border); border: 1px solid var(--border);
+  border-radius: var(--radius-md); overflow: hidden; margin: 56px 0 0;
+}
+.meta div { background: var(--bg-elevated); padding: 20px 22px; }
+.meta dt { font-size: 11px; font-weight: 600; letter-spacing: .09em; text-transform: uppercase; color: var(--text-tertiary); margin-bottom: 6px; }
+.meta dd { font-size: 16px; font-weight: 700; }
+
+section.block { padding: 72px 0; }
+.eyebrow { font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--accent-light); margin-bottom: 12px; }
+h2 { font-size: clamp(28px, 4vw, 38px); font-weight: 800; letter-spacing: -0.025em; line-height: 1.15; margin-bottom: 14px; }
+.sub { color: var(--text-secondary); font-size: 16px; max-width: 640px; margin-bottom: 40px; }
+
+.grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
+.feat {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius-md); padding: 26px 28px; transition: all .3s;
+}
+.feat:hover { border-color: var(--border-hover); background: var(--bg-card-hover); }
+.feat h3 { font-size: 16px; font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; }
+.feat h3 span { font-size: 18px; }
+.feat p { font-size: 14px; color: var(--text-secondary); line-height: 1.65; }
+.feat code, .panel code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: .88em; color: var(--accent-light);
+  background: rgba(139,92,246,0.1); padding: 1px 6px; border-radius: 6px;
+}
+
+.panel {
+  background: linear-gradient(135deg, var(--bg-card), var(--bg-elevated));
+  border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 36px 38px;
+}
+.panel h3 { font-size: 19px; font-weight: 700; margin-bottom: 14px; }
+.panel p { color: var(--text-secondary); font-size: 15px; margin-bottom: 16px; }
+.panel p:last-child { margin-bottom: 0; }
+.rule { border: 0; border-top: 1px solid var(--border); margin: 26px 0; }
+
+/* flow diagram */
+.flow {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 30px 28px; margin-top: 18px;
+}
+.flow svg { display: block; width: 100%; height: auto; }
+.flow__cap { font-size: 13px; color: var(--text-tertiary); margin-top: 18px; text-align: center; }
+
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { text-align: left; padding: 13px 0; border-bottom: 1px solid var(--border); vertical-align: top; }
+th { font-size: 11px; letter-spacing: .09em; text-transform: uppercase; color: var(--text-tertiary); font-weight: 600; }
+td:first-child { color: var(--text-secondary); width: 42%; }
+td:last-child { font-weight: 600; }
+
+ol.steps { list-style: none; counter-reset: s; }
+ol.steps li {
+  counter-increment: s; position: relative; padding-left: 46px;
+  margin-bottom: 18px; color: var(--text-secondary); font-size: 15px;
+}
+ol.steps li:last-child { margin-bottom: 0; }
+ol.steps li::before {
+  content: counter(s);
+  position: absolute; left: 0; top: -1px;
+  width: 30px; height: 30px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700; color: var(--accent-light);
+  background: rgba(139,92,246,0.12); border: 1px solid rgba(139,92,246,0.25);
+}
+ol.steps b { color: var(--text); font-weight: 600; }
+
+footer { border-top: 1px solid var(--border); padding: 40px 0 64px; margin-top: 24px; }
+footer .row { display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap; }
+footer p { font-size: 13px; color: var(--text-tertiary); }
+footer a { color: var(--text-secondary); text-decoration: none; font-size: 14px; font-weight: 500; }
+footer a:hover { color: var(--accent-light); }
+
+@media (max-width: 760px) {
+  .meta { grid-template-columns: repeat(2, 1fr); }
+  .grid { grid-template-columns: 1fr; }
+  .hero { padding: 56px 0 40px; }
+  section.block { padding: 52px 0; }
+  .panel { padding: 26px 24px; }
+  td:first-child { width: 50%; }
+  .flow { padding: 20px 14px; }
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar__inner">
+    <a class="back" href="/">← Arfan</a>
+    <span class="topbar__name">Serambi</span>
+  </div>
+</div>
+
+<main class="wrap">
+
+  <div class="hero">
+    <span class="badge"><span class="dot"></span>Shipped · v3.0.0</span>
+    <h1>Serambi <span class="grad">POS Pro</span></h1>
+    <p class="lede">An offline desktop point-of-sale for Windows. <strong>One installer, one PC</strong> — no account, no cloud, no subscription. The till, the stock ledger and the accounting books are the same application, working from the same database, on a machine that never needs the internet.</p>
+    <div class="cta">
+      <a class="btn btn--primary" href="https://github.com/AArfanAyub/serambi-pos-pro/releases/latest" target="_blank" rel="noopener noreferrer">Download installer ↗</a>
+      <a class="btn btn--ghost" href="https://github.com/AArfanAyub/serambi-pos-pro" target="_blank" rel="noopener noreferrer">Release notes ↗</a>
+    </div>
+    <p class="hint">82 MB installer · Windows 10 21H2+ / Windows 11 · 64-bit · 14-day trial</p>
+
+    <dl class="meta">
+      <div><dt>Install</dt><dd>One click</dd></div>
+      <div><dt>Network</dt><dd>None</dd></div>
+      <div><dt>Data</dt><dd>One SQLite file</dd></div>
+      <div><dt>Licence</dt><dd>Offline activation</dd></div>
+    </dl>
+  </div>
+
+  <section class="block">
+    <p class="eyebrow">Scope</p>
+    <h2>What it does</h2>
+    <p class="sub">A till is easy. A till that also keeps honest books is not.</p>
+    <div class="grid">
+      <div class="feat">
+        <h3><span>🛒</span>Sales</h3>
+        <p>Fast cart entry with barcode and SKU lookup, per-line and order discounts with reason codes, split and multi-tender payments, held carts and receipts. Every committed sale is immutable — corrections are made by reversal, so the record of what actually happened survives.</p>
+      </div>
+      <div class="feat">
+        <h3><span>📦</span>Inventory</h3>
+        <p>Stock is tracked through a movement ledger rather than a single editable number, so the current quantity is always explainable. Receiving with cost, stocktake variance, low-stock thresholds, and optional negative-stock prevention.</p>
+      </div>
+      <div class="feat">
+        <h3><span>📒</span>Accounting</h3>
+        <p>A real double-entry ledger sits underneath the till: chart of accounts, journal entries, general ledger, income statement, balance sheet, cash flow and trial balance. Every sale, void and refund posts automatically.</p>
+      </div>
+      <div class="feat">
+        <h3><span>🧮</span>Shifts</h3>
+        <p>Shift open and close with an opening float and cash movements, X and Z reports, and cash reconciliation against expected drawer totals. Exports to CSV, Excel and PDF.</p>
+      </div>
+      <div class="feat">
+        <h3><span>🧾</span>E-invoicing</h3>
+        <p>Tax invoice records with customer details, submission tracking and cancellation, with the submission credentials configurable in Settings.</p>
+      </div>
+      <div class="feat">
+        <h3><span>💳</span>Tenders</h3>
+        <p>Cash, e-wallet QR, and an external card terminal that is <em>recorded, not verified</em> — the software does not pretend to know what the bank approved.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <p class="eyebrow">The part that matters</p>
+    <h2>Balanced by construction</h2>
+    <p class="sub">The books cannot silently drift out of balance, because the database will not accept it.</p>
+    <div class="panel">
+      <p>Most retail software bolts accounting on afterwards: a sale is a row in a sales table, and a month-end export is reconciled by hand into an accounting package. That is where small businesses lose their books.</p>
+      <p>In Serambi a sale is a business event that posts a journal entry. Debits always equal credits — <strong>enforced at the database level</strong>, not by the application remembering to do it. Posted entries cannot be edited or deleted; they are reversed by a counter-entry. The trial balance therefore balances because it must, not because someone checked.</p>
+    </div>
+    <div class="flow">
+      <svg viewBox="0 0 680 150" role="img" aria-labelledby="flowTitle">
+        <title id="flowTitle">A sale flows through four stages: committed sale, journal entry, general ledger, financial statements.</title>
+        <defs>
+          <linearGradient id="flowAccent" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#8b5cf6"/>
+            <stop offset="100%" stop-color="#a78bfa"/>
+          </linearGradient>
+          <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#6a6a7a"/>
+          </marker>
+        </defs>
+
+        <rect x="6" y="34" width="140" height="62" rx="12" fill="#181820" stroke="#2a2a38"/>
+        <text x="76" y="60" text-anchor="middle" fill="#f5f5f7" font-size="13" font-weight="700" font-family="Inter, sans-serif">Sale</text>
+        <text x="76" y="79" text-anchor="middle" fill="#a0a0b0" font-size="11" font-family="Inter, sans-serif">committed</text>
+
+        <rect x="182" y="34" width="150" height="62" rx="12" fill="#181820" stroke="url(#flowAccent)"/>
+        <text x="257" y="60" text-anchor="middle" fill="#a78bfa" font-size="13" font-weight="700" font-family="Inter, sans-serif">Journal entry</text>
+        <text x="257" y="79" text-anchor="middle" fill="#a0a0b0" font-size="11" font-family="Inter, sans-serif">Dr Cash · Cr Sales</text>
+
+        <rect x="368" y="34" width="140" height="62" rx="12" fill="#181820" stroke="#2a2a38"/>
+        <text x="438" y="60" text-anchor="middle" fill="#f5f5f7" font-size="13" font-weight="700" font-family="Inter, sans-serif">Ledger</text>
+        <text x="438" y="79" text-anchor="middle" fill="#a0a0b0" font-size="11" font-family="Inter, sans-serif">posted, immutable</text>
+
+        <rect x="544" y="34" width="130" height="62" rx="12" fill="#181820" stroke="#2a2a38"/>
+        <text x="609" y="60" text-anchor="middle" fill="#f5f5f7" font-size="13" font-weight="700" font-family="Inter, sans-serif">Statements</text>
+        <text x="609" y="79" text-anchor="middle" fill="#34d399" font-size="11" font-family="Inter, sans-serif">balanced</text>
+
+        <line x1="148" y1="65" x2="176" y2="65" stroke="#6a6a7a" stroke-width="1.5" marker-end="url(#arrow)"/>
+        <line x1="334" y1="65" x2="362" y2="65" stroke="#6a6a7a" stroke-width="1.5" marker-end="url(#arrow)"/>
+        <line x1="510" y1="65" x2="538" y2="65" stroke="#6a6a7a" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+        <text x="340" y="126" text-anchor="middle" fill="#6a6a7a" font-size="11" font-family="Inter, sans-serif">debits = credits, enforced by the database</text>
+      </svg>
+      <p class="flow__cap">How a single sale reaches the books. Diagram, not a screenshot.</p>
+    </div>
+  </section>
+
+  <section class="block">
+    <p class="eyebrow">Detail</p>
+    <h2>Requirements</h2>
+    <table>
+      <thead><tr><th>Item</th><th>Specification</th></tr></thead>
+      <tbody>
+        <tr><td>Platform</td><td>Windows 10 21H2 or Windows 11, 64-bit</td></tr>
+        <tr><td>Install</td><td>One-click installer — no Node.js, no browser, no drivers</td></tr>
+        <tr><td>Download size</td><td>82 MB</td></tr>
+        <tr><td>Data location</td><td><code>%APPDATA%\serambi-pos-pro\</code></td></tr>
+        <tr><td>Storage engine</td><td>A single SQLite database on your own PC</td></tr>
+        <tr><td>Network</td><td>None. No listener, no telemetry, no auto-update</td></tr>
+        <tr><td>Licence</td><td>Offline activation, with a 14-day trial</td></tr>
+        <tr><td>Tenders</td><td>Cash · E-Wallet QR · external card terminal (recorded, not verified)</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="block">
+    <p class="eyebrow">Install</p>
+    <h2>Five minutes, one machine</h2>
+    <div class="panel">
+      <ol class="steps">
+        <li>Download <code>Serambi-POS-Pro-Setup-3.0.0.exe</code> from the releases page.</li>
+        <li>Double-click it. Windows SmartScreen will warn you because the installer is <b>not code-signed</b> — choose <b>More info → Run anyway</b>.</li>
+        <li>It installs to <code>%LOCALAPPDATA%\Programs\Serambi POS Pro</code> and adds a desktop shortcut.</li>
+        <li>Launch it and complete first-run setup: outlet details, tax code, owner account.</li>
+        <li>Activate with your licence key, or use the 14-day trial.</li>
+      </ol>
+      <hr class="rule">
+      <p>Back up by copying <code>%APPDATA%\serambi-pos-pro\</code>. That folder is the whole business.</p>
+    </div>
+  </section>
+
+  <section class="block">
+    <p class="eyebrow">Straight answers</p>
+    <h2>Four things worth knowing</h2>
+    <div class="grid">
+      <div class="feat">
+        <h3><span>⚠️</span>The installer is unsigned</h3>
+        <p>Code-signing certificates cost money annually. Until one is purchased, SmartScreen will warn on first run. The warning is expected and does not indicate a problem with the file.</p>
+      </div>
+      <div class="feat">
+        <h3><span>🔄</span>There is no auto-update</h3>
+        <p>Download a newer installer when one is released. Your data is preserved across upgrades. Nothing reaches out to a server on its own.</p>
+      </div>
+      <div class="feat">
+        <h3><span>🔒</span>The source is not published</h3>
+        <p>Serambi POS Pro is proprietary. This is a release repository, not a source repository. Third-party components and their licences are listed in the notices file.</p>
+      </div>
+      <div class="feat">
+        <h3><span>📄</span>Licence</h3>
+        <p>Proprietary, all rights reserved. The full agreement ships with the installer and in the repository as <code>LICENSE.txt</code>.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="row">
+      <p>Serambi POS Pro 3.0.0 · Built by Arfan · Windows · offline by design</p>
+      <a href="/">← Back to portfolio</a>
+    </div>
+  </footer>
+
+</main>
+
+</body>
+</html>
