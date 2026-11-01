@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="NEXUS — offline-first ERP + CRM for Windows. One Electron app, one SQLite file, no server, no network at runtime. Finance, inventory, purchasing, sales, CRM and reporting in one database.">
+<meta property="og:title" content="NEXUS — Offline-First ERP + CRM">
+<meta property="og:description" content="Accounting, inventory, purchasing, sales and CRM in one offline Windows application. One SQLite file, no server, no cloud.">
+<meta property="og:type" content="article">
+<title>NEXUS — Offline-First ERP + CRM | Arfan</title>
+<link rel="icon" href="/assets/nexus-icon.png">
+<style>
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 300 900;
+  font-display: swap;
+  src: url('../assets/fonts/inter-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 300 900;
+  font-display: swap;
+  src: url('../assets/fonts/inter-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+:root {
+  --bg: #0c0c12;
+  --bg-elevated: #12121a;
+  --bg-card: #181820;
+  --bg-card-hover: #1e1e2a;
+  --text: #f5f5f7;
+  --text-secondary: #a0a0b0;
+  --text-tertiary: #6a6a7a;
+  --accent: #8b5cf6;
+  --accent-light: #a78bfa;
+  --accent-glow: rgba(139,92,246,0.3);
+  --green: #34d399;
+  --border: rgba(255,255,255,0.06);
+  --border-hover: rgba(255,255,255,0.12);
+  --shadow-lg: 0 12px 40px rgba(0,0,0,0.5);
+  --radius-sm: 12px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.65;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 45% at 50% -5%, rgba(139,92,246,0.16), transparent),
+    radial-gradient(ellipse 45% 35% at 88% 12%, rgba(52,211,153,0.06), transparent);
+  pointer-events: none;
+  z-index: 0;
+}
+.wrap { position: relative; z-index: 1; max-width: 1040px; margin: 0 auto; padding: 0 24px; }
+
+.topbar {
+  position: sticky; top: 0; z-index: 20;
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  background: rgba(12,12,18,0.82);
+  border-bottom: 1px solid var(--border);
+}
+.topbar__inner {
+  max-width: 1040px; margin: 0 auto; padding: 16px 24px;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+}
+.back {
+  color: var(--text-secondary); text-decoration: none; font-size: 14px; font-weight: 500;
+  display: inline-flex; align-items: center; gap: 8px; transition: color .25s;
+}
+.back:hover { color: var(--text); }
+.topbar__name { font-size: 14px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--text-tertiary); }
+
+.hero { padding: 88px 0 56px; }
+.badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
+  color: var(--accent-light);
+  background: rgba(139,92,246,0.1);
+  border: 1px solid rgba(139,92,246,0.25);
+  padding: 7px 14px; border-radius: 100px; margin-bottom: 26px;
+}
+.badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 8px var(--green); }
+h1 {
+  font-size: clamp(40px, 7vw, 68px);
+  font-weight: 900; letter-spacing: -0.035em; line-height: 1.04; margin-bottom: 20px;
+}
+h1 .grad {
+  background: linear-gradient(135deg, var(--accent-light), var(--green));
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+}
+.lede { font-size: clamp(17px, 2.2vw, 20px); color: var(--text-secondary); max-width: 680px; margin-bottom: 34px; }
+.lede strong { color: var(--text); font-weight: 600; }
+
+.cta { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
+.btn {
+  padding: 14px 28px; border-radius: 100px; font-size: 15px; font-weight: 600;
+  text-decoration: none; display: inline-flex; align-items: center; gap: 8px; transition: all .3s;
+}
+.btn--primary { background: linear-gradient(135deg, var(--accent), var(--accent-light)); color: #fff; }
+.btn--primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px var(--accent-glow); }
+.btn--ghost { background: var(--bg-elevated); color: var(--text); border: 1px solid var(--border); }
+.btn--ghost:hover { border-color: var(--border-hover); background: var(--bg-card-hover); }
+.hint { font-size: 13px; color: var(--text-tertiary); }
+
+.meta {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px;
+  background: var(--border); border: 1px solid var(--border);
+  border-radius: var(--radius-md); overflow: hidden; margin: 56px 0 0;
+}
+.meta div { background: var(--bg-elevated); padding: 20px 22px; }
+.meta dt { font-size: 11px; font-weight: 600; letter-spacing: .09em; text-transform: uppercase; color: var(--text-tertiary); margin-bottom: 6px; }
+.meta dd { font-size: 16px; font-weight: 700; }
+
+section.block { padding: 72px 0; }
+.eyebrow { font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--accent-light); margin-bottom: 12px; }
+h2 { font-size: clamp(28px, 4vw, 38px); font-weight: 800; letter-spacing: -0.025em; line-height: 1.15; margin-bottom: 14px; }
+.sub { color: var(--text-secondary); font-size: 16px; max-width: 640px; margin-bottom: 40px; }
+
+.grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
+.feat {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius-md); padding: 26px 28px; transition: all .3s;
+}
+.feat:hover { border-color: var(--border-hover); background: var(--bg-card-hover); }
+.feat h3 { font-size: 16px; font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; }
+.feat h3 span { font-size: 18px; }
+.feat p { font-size: 14px; color: var(--text-secondary); line-height: 1.65; }
+.feat code, .panel code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: .88em; color: var(--accent-light);
+  background: rgba(139,92,246,0.1); padding: 1px 6px; border-radius: 6px;
+}
+
+.panel {
+  background: linear-gradient(135deg, var(--bg-card), var(--bg-elevated));
+  border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 36px 38px;
+}
+.panel h3 { font-size: 19px; font-weight: 700; margin-bottom: 14px; }
+.panel p { color: var(--text-secondary); font-size: 15px; margin-bottom: 16px; }
+.panel p:last-child { margin-bottom: 0; }
+.rule { border: 0; border-top: 1px solid var(--border); margin: 26px 0; }
+
+/* flow diagram */
+.flow {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 30px 28px; margin-top: 18px;
+}
+.flow svg { display: block; width: 100%; height: auto; }
+.flow__cap { font-size: 13px; color: var(--text-tertiary); margin-top: 18px; text-align: center; }
+
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { text-align: left; padding: 13px 0; border-bottom: 1px solid var(--border); vertical-align: top; }
+th { font-size: 11px; letter-spacing: .09em; text-transform: uppercase; color: var(--text-tertiary); font-weight: 600; }
+td:first-child { color: var(--text-secondary); width: 42%; }
+td:last-child { font-weight: 600; }
+
+ol.steps { list-style: none; counter-reset: s; }
+ol.steps li {
+  counter-increment: s; position: relative; padding-left: 46px;
+  margin-bottom: 18px; color: var(--text-secondary); font-size: 15px;
+}
+ol.steps li:last-child { margin-bottom: 0; }
+ol.steps li::before {
+  content: counter(s);
+  position: absolute; left: 0; top: -1px;
+  width: 30px; height: 30px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700; color: var(--accent-light);
+  background: rgba(139,92,246,0.12); border: 1px solid rgba(139,92,246,0.25);
+}
+ol.steps b { color: var(--text); font-weight: 600; }
+
+footer { border-top: 1px solid var(--border); padding: 40px 0 64px; margin-top: 24px; }
+footer .row { display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap; }
+footer p { font-size: 13px; color: var(--text-tertiary); }
+footer a { color: var(--text-secondary); text-decoration: none; font-size: 14px; font-weight: 500; }
+footer a:hover { color: var(--accent-light); }
+
+@media (max-width: 760px) {
+  .meta { grid-template-columns: repeat(2, 1fr); }
+  .grid { grid-template-columns: 1fr; }
+  .hero { padding: 56px 0 40px; }
+  section.block { padding: 52px 0; }
+  .panel { padding: 26px 24px; }
+  td:first-child { width: 50%; }
+  .flow { padding: 20px 14px; }
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar__inner">
+    <a class="back" href="/">← Arfan</a>
+    <span class="topbar__name">Nexus</span>
+  </div>
+</div>
+
+<main class="wrap">
+
+  <div class="hero">
+    <span class="badge"><span class="dot"></span>Offline-first · v1.0.0</span>
+    <h1>NEXUS <span class="grad">ERP + CRM</span></h1>
+    <p class="lede">An offline-first ERP and CRM for a small business. <strong>One Electron app, one SQLite file</strong> — no server, no cloud, no network access at runtime. Accounting, inventory, purchasing, sales, CRM and reporting all read and write the same database, on one Windows PC.</p>
+    <div class="cta">
+      <a class="btn btn--primary" href="https://github.com/AArfanAyub/nexus" target="_blank" rel="noopener noreferrer">View on GitHub ↗</a>
+      <a class="btn btn--ghost" href="#rules">How it works ↓</a>
+    </div>
+    <p class="hint">v1.0.0 · Windows 10/11 x64 · Electron 33 · React 18 · TypeScript 5 (strict)</p>
+
+    <dl class="meta">
+      <div><dt>Install</dt><dd>One click</dd></div>
+      <div><dt>Network</dt><dd>None</dd></div>
+      <div><dt>Data</dt><dd>One SQLite file</dd></div>
+      <div><dt>Licence</dt><dd>Offline activation</dd></div>
+    </dl>
+  </div>
+
+  <section class="block">
+    <p class="eyebrow">Scope</p>
+    <h2>One app for the whole business</h2>
+    <p class="sub">The spreadsheet a small business actually runs on — replaced, not supplemented.</p>
+    <div class="grid">
+      <div class="feat">
+        <h3><span>💰</span>Finance</h3>
+        <p>Chart of accounts, journals, invoices, bills, credit notes and payments. Trial balance, profit and loss, balance sheet, general ledger and fiscal periods — all from the same ledger the other modules post into.</p>
+      </div>
+      <div class="feat">
+        <h3><span>📦</span>Inventory</h3>
+        <p>Products, units of measure and warehouses. Stock moves and FIFO cost layers with valuation — so the current quantity is derived from movements, never typed in as a number.</p>
+      </div>
+      <div class="feat">
+        <h3><span>🛒</span>Purchasing</h3>
+        <p>Vendors, purchase orders and goods receipts, with a three-way match against the bill — and tolerances, so a small rounding difference does not block a payment.</p>
+      </div>
+      <div class="feat">
+        <h3><span>🧾</span>Sales</h3>
+        <p>Customers, quotations, sales orders and deliveries, with price lists and credit limits enforced before an order is confirmed.</p>
+      </div>
+      <div class="feat">
+        <h3><span>🤝</span>CRM</h3>
+        <p>Accounts, contacts, leads with one-click conversion, deals on a kanban pipeline, activities and analytics — sitting next to the sales orders they turn into.</p>
+      </div>
+      <div class="feat">
+        <h3><span>🗂️</span>Data &amp; control</h3>
+        <p>Import wizard and CSV export, custom fields, numbering, taxes and currencies, backup/restore and archive. Users, roles and permissions, and a hash-chained audit log over every mutation.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="rules" style="scroll-margin-top:90px">
+    <p class="eyebrow">The part that matters</p>
+    <h2>Rules the database will not let you break</h2>
+    <p class="sub">The invariants an accountant checks first — enforced in one place, proven by a test each.</p>
+    <div class="panel">
+      <p>Most small-business software is a set of screens over a database that trusts the screens. That works until two features disagree about what a number means.</p>
+      <p>In NEXUS the rules live in the data layer: <strong>nothing posts unbalanced</strong>, a posted document is immutable and corrected only by reversal, document numbers are gapless, stock is derived from moves, and every mutation lands in the audit log. <code>docs/QA-RULES.md</code> lists all twenty-five, each with the test that proves it.</p>
+    </div>
+    <div class="flow">
+      <svg viewBox="0 0 680 150" role="img" aria-labelledby="flowTitle">
+        <title id="flowTitle">Every document passes through a rules engine before it reaches the ledger and stock, and every mutation is written to an audit log.</title>
+        <defs>
+          <linearGradient id="flowAccent" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#8b5cf6"/>
+            <stop offset="100%" stop-color="#a78bfa"/>
+          </linearGradient>
+          <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#6a6a7a"/>
+          </marker>
+        </defs>
+
+        <rect x="6" y="34" width="150" height="62" rx="12" fill="#181820" stroke="#2a2a38"/>
+        <text x="81" y="60" text-anchor="middle" fill="#f5f5f7" font-size="13" font-weight="700" font-family="Inter, sans-serif">Document</text>
+        <text x="81" y="79" text-anchor="middle" fill="#a0a0b0" font-size="11" font-family="Inter, sans-serif">invoice · PO · move</text>
+
+        <rect x="186" y="34" width="150" height="62" rx="12" fill="#181820" stroke="url(#flowAccent)"/>
+        <text x="261" y="60" text-anchor="middle" fill="#a78bfa" font-size="13" font-weight="700" font-family="Inter, sans-serif">Rules engine</text>
+        <text x="261" y="79" text-anchor="middle" fill="#a0a0b0" font-size="11" font-family="Inter, sans-serif">balance · immutability</text>
+
+        <rect x="366" y="34" width="150" height="62" rx="12" fill="#181820" stroke="#2a2a38"/>
+        <text x="441" y="60" text-anchor="middle" fill="#f5f5f7" font-size="13" font-weight="700" font-family="Inter, sans-serif">Ledger &amp; stock</text>
+        <text x="441" y="79" text-anchor="middle" fill="#a0a0b0" font-size="11" font-family="Inter, sans-serif">posted, immutable</text>
+
+        <rect x="546" y="34" width="128" height="62" rx="12" fill="#181820" stroke="#2a2a38"/>
+        <text x="610" y="60" text-anchor="middle" fill="#f5f5f7" font-size="13" font-weight="700" font-family="Inter, sans-serif">Audit log</text>
+        <text x="610" y="79" text-anchor="middle" fill="#34d399" font-size="11" font-family="Inter, sans-serif">hash-chained</text>
+
+        <line x1="158" y1="65" x2="180" y2="65" stroke="#6a6a7a" stroke-width="1.5" marker-end="url(#arrow)"/>
+        <line x1="338" y1="65" x2="360" y2="65" stroke="#6a6a7a" stroke-width="1.5" marker-end="url(#arrow)"/>
+        <line x1="518" y1="65" x2="540" y2="65" stroke="#6a6a7a" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+        <text x="340" y="126" text-anchor="middle" fill="#6a6a7a" font-size="11" font-family="Inter, sans-serif">nothing posts unbalanced — the rule is in the data, not the screen</text>
+      </svg>
+      <p class="flow__cap">How one document reaches the books. Diagram, not a screenshot.</p>
+    </div>
+  </section>
+
+  <section class="block">
+    <p class="eyebrow">Detail</p>
+    <h2>Requirements</h2>
+    <table>
+      <thead><tr><th>Item</th><th>Specification</th></tr></thead>
+      <tbody>
+        <tr><td>Platform</td><td>Windows 10 / 11, 64-bit (macOS and Linux run from source, untested)</td></tr>
+        <tr><td>Runtime</td><td>Electron 33 · React 18 · TypeScript 5 (strict)</td></tr>
+        <tr><td>Storage</td><td><code>sql.js</code> — SQLite compiled to WebAssembly, no native modules</td></tr>
+        <tr><td>Data location</td><td><code>%APPDATA%\nexus\nexus.db</code> — one file</td></tr>
+        <tr><td>Network</td><td>None at runtime. No listener, no telemetry, no auto-update</td></tr>
+        <tr><td>Backup</td><td>Settings → Backup — writes the database plus a SHA-256 manifest</td></tr>
+        <tr><td>Users</td><td>One at a time — a single-instance lock, not a shared server</td></tr>
+        <tr><td>Licence</td><td>Community edition included; Pro / Enterprise via an offline key</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="block">
+    <p class="eyebrow">Build</p>
+    <h2>From source to installer</h2>
+    <div class="panel">
+      <ol class="steps">
+        <li><code>git clone https://github.com/AArfanAyub/nexus</code> and enter the folder.</li>
+        <li><code>npm install</code> — zero native compilation, so no build tools are needed.</li>
+        <li><code>npm run dev</code> — Vite, the TypeScript watcher, the preload bundle and Electron, together.</li>
+        <li><code>npm test</code> — 128 assertions, no Electron required.</li>
+        <li><code>npm run dist</code> — an NSIS installer and a portable <code>.exe</code> into <code>release/</code>.</li>
+      </ol>
+      <hr class="rule">
+      <p>If <code>npm run dist</code> fails on a symlink-privilege error, it is Windows, not the app: enable Developer Mode, or build with <code>-c.win.signAndEditExecutable=false</code>. Copy <code>%APPDATA%\nexus\nexus.db</code> and you have a backup — but prefer Settings → Backup, which also verifies the checksum on restore.</p>
+    </div>
+  </section>
+
+  <section class="block">
+    <p class="eyebrow">Straight answers</p>
+    <h2>Four things worth knowing</h2>
+    <div class="grid">
+      <div class="feat">
+        <h3><span>🪟</span>Windows x64 only</h3>
+        <p>The build targets Windows 10/11 x64. macOS and Linux run from source but are not tested, so treat them as experimental.</p>
+      </div>
+      <div class="feat">
+        <h3><span>⚠️</span>No code signing</h3>
+        <p>There is no signing certificate, so SmartScreen will warn on first run of a build you make yourself. The warning is expected and does not indicate a problem with the file.</p>
+      </div>
+      <div class="feat">
+        <h3><span>👤</span>One user at a time</h3>
+        <p>NEXUS takes a single-instance lock and refuses to run twice. It is a desktop product, not a shared server — two people cannot work in the same file at once.</p>
+      </div>
+      <div class="feat">
+        <h3><span>📄</span>Proprietary licence</h3>
+        <p>The source is public but not open source: it is under the NEXUS Proprietary Perpetual License, all rights reserved. The community edition is complete for its module set, with no expiry and no nag screen.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="row">
+      <p>NEXUS 1.0.0 · Built by Arfan · Windows · offline by design</p>
+      <a href="/">← Back to portfolio</a>
+    </div>
+  </footer>
+
+</main>
+
+</body>
+</html>

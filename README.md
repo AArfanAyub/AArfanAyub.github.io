@@ -13,9 +13,11 @@ Built as a single static page. No frameworks, no build step, no external depende
 ├── index.html          # the website (entry point)
 ├── imri/               # project page: IMRI, offline library management
 ├── serambi/            # project page: Serambi POS Pro, offline point of sale
+├── nexus/              # project page: NEXUS, offline-first ERP + CRM
 ├── assets/
 │   ├── p-01…p-49.webp  # photos
 │   ├── imri-*.png      # IMRI screenshots
+│   ├── nexus-icon.png  # NEXUS app icon (favicon / brand mark)
 │   └── fonts/          # Inter, self-hosted (woff2, 2 subsets)
 ├── _headers            # security + cache rules (Cloudflare Pages / Netlify)
 └── robots.txt          # search engine rules
