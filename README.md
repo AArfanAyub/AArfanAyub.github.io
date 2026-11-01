@@ -1,103 +1,80 @@
-# A.ArfanAyub — Personal Website
+# aarfanayub.github.io
 
-Personal site of **Ahmad Arfan bin Ayub** — environmental management student at UPM, community volunteer.
+Hi — I'm Arfan. This is my portfolio site.
 
-Built as a single static page. No frameworks, no build step, no external dependencies.
+It's one static HTML file plus a few project pages. No framework, no build step,
+no dependencies. I edit the file, push to `main`, and it's live about a minute
+later.
 
----
+I kept it static on purpose. It's a portfolio — it should load fast on a phone
+with one bar of signal, and it should still open in five years without me
+touching a lockfile. A plain HTML file does both.
 
-## 📁 What's in this repo
+## What's here
 
 ```
-/
-├── index.html          # the website (entry point)
-├── imri/               # project page: IMRI, offline library management
-├── serambi/            # project page: Serambi POS Pro, offline point of sale
-├── nexus/              # project page: NEXUS, offline-first ERP + CRM
-├── assets/
-│   ├── p-01…p-49.webp  # photos
-│   ├── imri-*.png      # IMRI screenshots
-│   ├── nexus-icon.png  # NEXUS app icon (favicon / brand mark)
-│   └── fonts/          # Inter, self-hosted (woff2, 2 subsets)
-├── _headers            # security + cache rules (Cloudflare Pages / Netlify)
-└── robots.txt          # search engine rules
+index.html        the site — HTML, CSS and JS all inline
+imri/             IMRI — offline library system
+serambi/          Serambi POS Pro — offline point of sale
+nexus/            NEXUS — offline ERP + CRM
+assets/
+  p-01…p-49.webp  photos
+  imri-*.png      IMRI screenshots
+  nexus-icon.png  NEXUS icon (also the favicon)
+  fonts/          Inter, self-hosted
+_headers          security + cache headers (Cloudflare / Netlify)
+robots.txt
 ```
 
-Each project page is fully self-contained: its own inline CSS, its own
-`@font-face`, no shared stylesheet to break. They reuse the same CSS custom
-properties so they match the main page.
+Each project page is its own file with its own inline CSS. No shared
+stylesheet. That's deliberate: a bad edit on one project page can't break the
+homepage, and I never have to worry about a class name colliding. They all use
+the same CSS variables, so they still look like one site.
 
----
+## Running it locally
 
-## 🚀 Deploying
+Nothing to install. You can open `index.html` straight in a browser. If you
+want it served properly (fonts, relative paths, headers), run this from the
+repo root:
 
-This is a plain static site — no build command needed.
+```bash
+python -m http.server 8000
+```
 
-### Cloudflare Pages (recommended — free forever, unlimited bandwidth)
+Then open http://localhost:8000.
 
-1. Push this repo to GitHub
-2. Cloudflare dashboard → **Workers & Pages** → **Create** → **Pages** → **Connect to Git**
-3. Select this repo
-4. Build settings:
-   - **Framework preset:** None
-   - **Build command:** *(leave empty)*
-   - **Build output directory:** `/`
-5. **Save and Deploy**
+## Deploying
 
-Your site goes live at `your-project.pages.dev`. The `_headers` file is applied automatically.
+Live at **aarfanayub.xyz** (Cloudflare in front of GitHub Pages) and
+**aarfanayub.github.io**.
 
-### GitHub Pages (alternative)
+GitHub Pages builds straight from `main`, so pushing is the whole deploy. Give
+it a minute.
 
-1. Repo → **Settings** → **Pages**
-2. **Source:** Deploy from a branch → `main` → `/ (root)`
-3. Save — live at `username.github.io/repo-name`
+If you're using this as a starting point for your own site, Cloudflare Pages
+works well too: connect the repo, leave the build command empty, set the output
+directory to `/`. It picks up `_headers` automatically. GitHub Pages ignores
+`_headers`, so there the security headers come from the `<meta>` tags in
+`index.html` instead.
 
-> Note: GitHub Pages ignores the `_headers` file, so security headers there come only from the `<meta>` tags in `index.html`.
+## Notes to myself
 
+- **No third-party requests.** Fonts are self-hosted, there's no analytics and
+  no CDN. The CSP is strict (`default-src 'none'`), so everything on the page is
+  either inline or same-origin. If I add something that needs a new source, I
+  have to add it to the policy — otherwise it silently fails, which is the whole
+  point of having the policy.
+- **Images** are WebP and lazy-loaded; the hero is preloaded. Photos are
+  `p-01.webp` … `p-49.webp` in `assets/`.
+- **Editing** means editing `index.html`. The CSS is in the `<style>` block near
+  the top, the JS is at the bottom. To swap a photo, drop a new file into
+  `assets/` with the same name.
 
+## Contact
 
----
-
-## 🔒 Security
-
-- Content-Security-Policy (no external scripts, styles, or CDNs)
-- `X-Frame-Options: DENY` (clickjacking protection)
-- `X-Content-Type-Options: nosniff`
-- `Referrer-Policy: strict-origin-when-cross-origin`
-- `Permissions-Policy` (camera, microphone, location, etc. disabled)
-- `Strict-Transport-Security` (forces HTTPS)
-- Fully self-contained — zero third-party code
-
-> **Fonts used to be the exception.** The page pulled Inter from
-> `fonts.googleapis.com` via `@import`, which the CSP above blocked outright —
-> so the whole site silently rendered in fallback fonts, and every visit made a
-> request to Google that was refused. Inter is now served from `assets/fonts/`
-> and the policy carries `font-src 'self'`. Zero third-party requests is now
-> literally true, not aspirational.
-
-## ⚡ Performance
-
-- All images in **WebP** format (~37% smaller than JPEG)
-- Hero image preloaded with high priority
-- Offscreen gallery sections use `content-visibility: auto`
-- All gallery images lazy-loaded
-- Immutable 1-year cache on `/assets/*`
-
----
-
-## ✏️ Editing
-
-Just edit `index.html` — the CSS and JS are inline. Photos live in `assets/` and are named `p-01.webp` … `p-49.webp`.
-
-To swap a photo: replace the file in `assets/` keeping the same name.
-
----
-
-## 📬 Contact
-
-- Email: <arfansec2@gmail.com>
-- WhatsApp: 017-544 2335
-- Instagram: [@arfanzzz.\_](https://instagram.com/arfanzzz._)
+- arfansec2@gmail.com
+- WhatsApp 017-544 2335
+- Instagram [@arfanzzz.\_](https://instagram.com/arfanzzz._)
 
 ---
 
